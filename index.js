@@ -1,4 +1,4 @@
-module.exports = function buildFilterObject(searchString) {
+function buildFilterObject(searchString) {
 	// object that act as filter to mongoDB
 	var filterObject = {};
 	// array that contains all search arguments and operator
@@ -50,7 +50,7 @@ module.exports = function buildFilterObject(searchString) {
 		}
 	}
 	return filterObject;
-};
+}
 
 function validateString(searchString) {
 	// regex that validate String
@@ -173,3 +173,5 @@ function testingBinaryTree(searchString, argArray, operatorArray) {
 		argArray.unshift(args[0]);
 	}
 }
+
+module.exports.buildFilterObject = buildFilterObject;
