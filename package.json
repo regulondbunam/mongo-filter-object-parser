@@ -1,0 +1,24 @@
+{
+  "name": "mongodb-filter-object-parser",
+  "version": "1.0.0",
+  "description": "module that converts a string to an object that can be used in mongodb as a filter",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andresloal/advanced-search-to-mongodb-filter.git"
+  },
+  "author": "andresloal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andresloal/advanced-search-to-mongodb-filter/issues"
+  },
+  "homepage": "https://github.com/andresloal/advanced-search-to-mongodb-filter#readme",
+  "keywords": [
+    "npm",
+    "npm-mongodb",
+    "buildFilter"
+  ]
+}
