@@ -4,31 +4,42 @@ With this module you can be able to make a MongoDB filter starting from a string
 
 >(Value[Field] OR|AND Value[Field])
 
+*Note:* _At this time, the tree can only grow to the left, all new arguments should be added at the end_
+
 Example: 
 
-> (Blue[Color] OR Red[Color]) AND Medium[Size]
+> ((Green[Color] OR Blue[Color]) OR Red[Color]) AND Medium[Size]
 
 Based on Binary Expression Tree the string will be passed to an object
 
-![Binary expression tree](C:\Users\dell\Downloads\Binary.png) <--- OJO AQUI
+![Binary expression tree]
 
 As a result we'll obtain an object:
 
 ```json
 {
-	"$AND": [{
-			"Size": "Medium"
-		},
-		{
-			"$OR": [{
-					"Color": "Blue"
-				},
-				{
-					"Color": "Red"
-				}
-			]
-		}
-	]
+  "$AND": [
+    {
+      "Size": "Medium"
+    },
+    {
+      "$OR": [
+        {
+          "Color": "Red"
+        },
+        {
+          "$OR": [
+            {
+              "Color": "Green"
+            },
+            {
+              "Color": "Blue"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
 ```
 
