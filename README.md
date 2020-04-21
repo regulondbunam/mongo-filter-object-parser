@@ -12,7 +12,7 @@ Example:
 
 Based on Binary Expression Tree the string will be passed to an object
 
-![Binary expression tree](https://github.com/andresloal/mongo-filter-object-parser/blob/master/images/Binary%20Tree%20Example.png)
+![Binary expression tree](images/binaryTreeExample.png)
 
 As a result we'll obtain an object:
 

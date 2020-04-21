@@ -64,7 +64,7 @@ function validateString(searchString) {
 			rightSB = 0;
 		// the for loop gets all parenthesis and Square Brackets count
 		for (let i = 0; i < searchString.length; i++) {
-			const charValue = searchString.charAt(i);
+			const charValue = String(searchString).charAt(i);
 			if (charValue === '(') leftPar += 1;
 			if (charValue === ')') rightPar += 1;
 			if (charValue === '[') leftSB += 1;
@@ -133,13 +133,13 @@ function testingBinaryTree(searchString, argArray, operatorArray) {
 	var rightNode = '';
 	var operator = '';
 	//checks if the start of the string is an ( thats means there are more of 2 args
-	if (searchString.charAt(0) === '(') {
+	if (String(searchString).charAt(0) === '(') {
 		//remove the first char of the string '('
 		searchString = searchString.substring(1);
 		//loop to get the left and right string based in the first ')' from
 		//right to left
 		for (checkPoint = searchString.length; checkPoint > 0; checkPoint--) {
-			if (searchString.charAt(checkPoint) === ')') {
+			if (String(searchString).charAt(checkPoint) === ')') {
 				//based on checkpoint, slice the searchstring to get rightSide
 				var RN = searchString.slice(checkPoint + 2);
 				//separete the rightSide into operator and rightNode
@@ -151,7 +151,7 @@ function testingBinaryTree(searchString, argArray, operatorArray) {
 		}
 		//to get the leftNode is used checkpoint in a loop
 		for (var i = 0; i < checkPoint; i++) {
-			leftNode = leftNode + searchString.charAt(i);
+			leftNode = leftNode + String(searchString).charAt(i);
 		}
 		//the operator and rightNode are pushed at the start of the respective array
 		argArray.unshift(rightNode);
