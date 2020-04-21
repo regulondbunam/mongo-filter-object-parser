@@ -1,4 +1,4 @@
-function buildFilterObject(searchString) {
+module.exports = function buildFilterObject(searchString) {
 	// object that act as filter to mongoDB
 	var filterObject = {};
 	// array that contains all search arguments and operator
@@ -34,7 +34,7 @@ function buildFilterObject(searchString) {
 			/** prepare a template filter that will help push the filterObject 
 			 * to the same level as the next operator*/
 
-			filterBoilerPlate = {};
+			var filterBoilerPlate = {};
 			/** checks if the operatorArray has more operators */
 			if (operatorArray.length !== 0) {
 				ope = '$' + operatorArray.shift();
@@ -50,7 +50,7 @@ function buildFilterObject(searchString) {
 		}
 	}
 	return filterObject;
-}
+};
 
 function validateString(searchString) {
 	// regex that validate String
@@ -90,8 +90,8 @@ function getArg(Arg, filterObj, operator) {
 	//removing empty object that can be after split
 	removeEmptyObject(args);
 	//get the key and value in separated variables
-	key = args[1];
-	value = args[0];
+	var key = args[1];
+	var value = args[0];
 	//checks if the value is a number and parse it
 	if (regexNumb.test(value)) value = parseInt(value);
 	//checks if the operator exists (in case of simple queries)
@@ -173,5 +173,3 @@ function testingBinaryTree(searchString, argArray, operatorArray) {
 		argArray.unshift(args[0]);
 	}
 }
-
-module.exports.buildFilterObject = buildFilterObject;
