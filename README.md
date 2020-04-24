@@ -2,13 +2,13 @@
 
 With this module you can be able to make a MongoDB filter starting from a string that contains all arguments and operator, the syntax of the string will be like:
 
->(Value[Field] OR|AND Value[Field])
+>(Value[Field]) or|and Value[Field]
 
 *Note:* _At this time, the tree can only grow to the left, all new arguments should be added at the end_
 
 Example: 
 
-> ((Green[Color] OR Blue[Color]) OR Red[Color]) AND Medium[Size]
+> ((Green[Color] or Blue[Color]) or Red[Color]) and Medium[Size]
 
 Based on Binary Expression Tree the string will be passed to an object
 
@@ -18,17 +18,17 @@ As a result we'll obtain an object:
 
 ```json
 {
-  "$AND": [
+  "$and": [
     {
       "Size": "Medium"
     },
     {
-      "$OR": [
+      "$or": [
         {
           "Color": "Red"
         },
         {
-          "$OR": [
+          "$or": [
             {
               "Color": "Green"
             },
@@ -53,9 +53,8 @@ As a result we'll obtain an object:
 
 ~~~javascript
 import buildFilter from "buildFilter";
-import mongoose from 'mongoose';
 
-string = '(Blue[Color] OR Red[Color]) AND Medium[Size]';
+string = '(Blue[Color] or Red[Color]) and Medium[Size]';
 const Filter = buildFilter(string);
 
 //use trough mongodb

@@ -17,7 +17,7 @@ module.exports = function buildFilterObject(searchString) {
 	} else {
 		/** prepare the operator with a $ character needed by mongodb to 
 		 * identified the query as a logical comparision */
-		var ope = '$' + operatorArray.shift();
+		var ope = '$' + operatorArray.shift().toLowerCase();
 		//prepare the first level of the object with the first logical operator
 		filterObject[ope] = [];
 		/** this loop asigns the 2 elements that are compared with the 
@@ -37,7 +37,7 @@ module.exports = function buildFilterObject(searchString) {
 			var filterBoilerPlate = {};
 			/** checks if the operatorArray has more operators */
 			if (operatorArray.length !== 0) {
-				ope = '$' + operatorArray.shift();
+				ope = '$' + operatorArray.shift().toLowerCase();
 				filterBoilerPlate[ope] = [];
 				getArg(arg, filterBoilerPlate, ope);
 				/**push the filterObject with the deeper level (the one obtained first)
@@ -73,7 +73,8 @@ function validateString(searchString) {
 		// evaluates if all Parenthesis and Square Brackes have an open and closing character
 		if (leftPar === rightPar && leftSB === rightSB) {
 			//console.log('everything ok');
-			return rightPar;
+			if (String(searchString).charAt(searchString.length - 1) != ')') return rightPar;
+			else throw new Error('syntax not yet supported, failed on regex test');
 		} else throw new Error('failed on regex test, check your string'); // if has a missing parenthesis or Square Bracket returns error
 	} else throw new Error('failed on regex test, check your string');
 }
@@ -85,7 +86,7 @@ function validateString(searchString) {
  */
 function getArg(Arg, filterObj, operator) {
 	//separate the argument into array of elements to have key and values as separated elements
-	var args = Arg.split(/\s|\[|\]/);
+	var args = Arg.split(/\[|\]/);
 	const regexNumb = /^[0-9]+/gm;
 	//removing empty object that can be after split
 	removeEmptyObject(args);
@@ -143,9 +144,12 @@ function testingBinaryTree(searchString, argArray, operatorArray) {
 				//based on checkpoint, slice the searchstring to get rightSide
 				var RN = searchString.slice(checkPoint + 2);
 				//separete the rightSide into operator and rightNode
-				var rightSide = RN.split(' ');
-				operator = rightSide[0];
-				rightNode = rightSide[1];
+				var operatorPosition = 0;
+				while (String(RN).charAt(operatorPosition) != ' ') {
+					operator = operator + String(RN).charAt(operatorPosition);
+					operatorPosition++;
+				}
+				rightNode = RN.slice(operatorPosition + 1);
 				break;
 			}
 		}
