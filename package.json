@@ -16,7 +16,7 @@
 		"url": "https://github.com/andresloal/mongo-filter-object-parser/issues"
 	},
 	"homepage": "https://github.com/andresloal/mongo-filter-object-parser#readme",
-	"keywords": [ "npm", "npm-mongodb", "buildFilter" ],
+	"keywords": [ "npm", "npm-mongodb", "buildFilter", "mongodb", "filter", "parser" ],
 	"devDependencies": {
 		"babel-preset-env": "^1.7.0",
 		"jest": "^25.4.0"
