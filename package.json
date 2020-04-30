@@ -11,16 +11,12 @@
 		"url": "git+https://github.com/andresloal/mongo-filter-object-parser.git"
 	},
 	"author": "andresloal",
-	"license": "ISC",
+	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/andresloal/mongo-filter-object-parser/issues"
 	},
 	"homepage": "https://github.com/andresloal/mongo-filter-object-parser#readme",
-	"keywords": [
-		"npm",
-		"npm-mongodb",
-		"buildFilter"
-	],
+	"keywords": [ "npm", "npm-mongodb", "buildFilter" ],
 	"devDependencies": {
 		"babel-preset-env": "^1.7.0",
 		"jest": "^25.4.0"

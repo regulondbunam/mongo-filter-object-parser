@@ -9,7 +9,7 @@ module.exports = function buildFilterObject(searchString) {
 	// insert all args and operator that searchString contains based on the parenthesis count
 	while (count != 0) {
 		count = validateString(searchString);
-		searchString = testingBinaryTree(searchString, argArray, operatorArray);
+		searchString = binaryTreeExtractor(searchString, argArray, operatorArray);
 	}
 	// if there is only one argument and not operator, just create a simple query filter with one only argument
 	if (operatorArray.length === 0) {
@@ -95,6 +95,7 @@ function getArg(Arg, filterObj, operator) {
 	var value = args[0];
 	//checks if the value is a number and parse it
 	if (regexNumb.test(value)) value = parseInt(value);
+	else value = new RegExp('^' + args[0] + '$', 'i');
 	//checks if the operator exists (in case of simple queries)
 	if (operator === undefined) {
 		filterObj[key] = value;
@@ -126,7 +127,7 @@ function removeEmptyObject(elementsArray) {
  * @param {Array} argArray argument array
  * @param {Array} operatorArray operator array
 */
-function testingBinaryTree(searchString, argArray, operatorArray) {
+function binaryTreeExtractor(searchString, argArray, operatorArray) {
 	//the checkpoint is the place where string gonna be sliced
 	var checkPoint = 0;
 	//define 3 elements of BinaryTree, leftNode, rightNode and the operator
