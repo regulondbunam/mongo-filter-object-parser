@@ -1,6 +1,6 @@
 {
 	"name": "mongodb-filter-object-parser",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "module that converts a string to an object that can be used in mongodb as a filter",
 	"main": "index.js",
 	"scripts": {
@@ -16,7 +16,14 @@
 		"url": "https://github.com/andresloal/mongo-filter-object-parser/issues"
 	},
 	"homepage": "https://github.com/andresloal/mongo-filter-object-parser#readme",
-	"keywords": [ "npm", "npm-mongodb", "buildFilter", "mongodb", "filter", "parser" ],
+	"keywords": [
+		"npm",
+		"npm-mongodb",
+		"buildFilter",
+		"mongodb",
+		"filter",
+		"parser"
+	],
 	"devDependencies": {
 		"babel-preset-env": "^1.7.0",
 		"jest": "^25.4.0"
