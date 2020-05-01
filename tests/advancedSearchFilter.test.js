@@ -1,4 +1,4 @@
-const buildFilter = require('../index');
+const { advancedSearchFilter } = require('../index');
 
 const simpleTest = 'forward[geneInfo.strand]';
 const test2Args = '(forward[geneInfo.strand]) AND reverse[geneInfo.strand]';
@@ -8,32 +8,32 @@ const testSpaces =
 const notSupportedString = '(Carlos[Author] AND Robert[Investigator]) OR (General[Book] AND Biomedics[Title])';
 
 test('simple query object filter', () => {
-	expect(buildFilter(simpleTest)).toStrictEqual({ 'geneInfo.strand': 'forward' });
+	expect(advancedSearchFilter(simpleTest)).toStrictEqual({ 'geneInfo.strand': /^forward$/i });
 });
 
 test('filter object with 2 arguments', () => {
-	expect(buildFilter(test2Args)).toStrictEqual({
-		$and: [ { 'geneInfo.strand': 'forward' }, { 'geneInfo.strand': 'reverse' } ]
+	expect(advancedSearchFilter(test2Args)).toStrictEqual({
+		$and: [ { 'geneInfo.strand': /^forward$/i }, { 'geneInfo.strand': /^reverse$/i } ]
 	});
 });
 
 test('get correct object filter with depth of 4 arguments', () => {
-	expect(buildFilter(test4Args)).toStrictEqual({
+	expect(advancedSearchFilter(test4Args)).toStrictEqual({
 		$and: [
-			{ Title: 'Biomedics' },
-			{ $or: [ { Book: 'General' }, { $and: [ { Author: 'Carlos' }, { Investigator: 'Robert' } ] } ] }
+			{ Title: /^Biomedics$/i },
+			{ $or: [ { Book: /^General$/i }, { $and: [ { Author: /^Carlos$/i }, { Investigator: /^Robert$/i } ] } ] }
 		]
 	});
 });
 
 test('value with spaces char', () => {
-	expect(buildFilter(testSpaces)).toStrictEqual({
+	expect(advancedSearchFilter(testSpaces)).toStrictEqual({
 		$and: [
-			{ Title: 'Natural Biomedics' },
+			{ Title: /^Natural Biomedics$/i },
 			{
 				$or: [
-					{ Book: 'General recommendations' },
-					{ $and: [ { Author: 'Carlos' }, { Investigator: 'Robert' } ] }
+					{ Book: /^General recommendations$/i },
+					{ $and: [ { Author: /^Carlos$/i }, { Investigator: /^Robert$/i } ] }
 				]
 			}
 		]
@@ -42,6 +42,6 @@ test('value with spaces char', () => {
 
 test('string syntax not yet supported', () => {
 	expect(() => {
-		buildFilter(notSupportedString);
+		advancedSearchFilter(notSupportedString);
 	}).toThrowError(Error);
 });

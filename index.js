@@ -1,4 +1,4 @@
-module.exports = function buildFilterObject(searchString) {
+const advancedSearchFilter = (searchString) => {
 	// object that act as filter to mongoDB
 	var filterObject = {};
 	// array that contains all search arguments and operator
@@ -50,6 +50,45 @@ module.exports = function buildFilterObject(searchString) {
 		}
 	}
 	return filterObject;
+};
+
+const simpleSearchFilter = (searchString) => {
+	let simpleFilter = { $text: {} };
+	let finalString = '';
+	let wordsToFind = searchString.split(' ');
+	let regexOperator = /^OR|AND|NOT$/i;
+	if (wordsToFind.length != 1) {
+		while (wordsToFind.length != 0) {
+			let extractedWord = wordsToFind.shift();
+			if (regexOperator.test(extractedWord)) {
+				extractedWord = extractedWord.toLowerCase();
+				let nextExtract = wordsToFind.shift();
+				switch (extractedWord) {
+					case 'or':
+						if (/^and$/i.test(wordsToFind[0])) {
+							nextExtract = `\"${nextExtract}\"`;
+						}
+						finalString = finalString + ` ${nextExtract}`;
+						break;
+					case 'and':
+						finalString = finalString + ` \"${nextExtract}\"`;
+						break;
+					case 'not':
+						finalString = finalString + ` -${nextExtract}`;
+						break;
+				}
+			} else {
+				if (wordsToFind.length > 1) {
+					if (/^and$/i.test(wordsToFind[0])) {
+						extractedWord = ` \"${extractedWord}\"`;
+					}
+				}
+				finalString = finalString + `${extractedWord}`;
+			}
+		}
+		simpleFilter.$text = { $search: `${finalString}` };
+	} else simpleFilter.$text = { $search: ` ${searchString} ` };
+	return simpleFilter;
 };
 
 function validateString(searchString) {
@@ -178,3 +217,8 @@ function binaryTreeExtractor(searchString, argArray, operatorArray) {
 		argArray.unshift(args[0]);
 	}
 }
+
+module.exports = {
+	advancedSearchFilter,
+	simpleSearchFilter
+};
