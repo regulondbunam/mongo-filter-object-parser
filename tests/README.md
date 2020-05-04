@@ -10,12 +10,12 @@ The first one focused on queries that only want to get the documents containing 
 
 - Get all documents containing one word or more in all text fields of the document.
 - Can be used logical operators like AND, OR & NOT.
+- Use two or more words as one argument.
 
 ### Out of scope
 
 - Advanced logic control with the use of parentheses.
 - Make the query in a specific Field of the document.
-- Use two or more words as one argument.
 
 
 

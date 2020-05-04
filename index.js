@@ -52,42 +52,85 @@ const advancedSearchFilter = (searchString) => {
 	return filterObject;
 };
 
+/** this function creates a filter for the text search in mongodb, 
+ * it is necessary to have a text index in the collection
+ * @param {String} searchstring string that contains all argument 
+ * and operators to be parsed
+ */
 const simpleSearchFilter = (searchString) => {
+	// boiler-plate of the filter
 	let simpleFilter = { $text: {} };
 	let finalString = '';
-	let wordsToFind = searchString.split(' ');
+	/** we need to identified possible args with two or more words
+	 enclosed in double quotes */
+	searchString = replaceParentheses(searchString);
+	//split all args by blank space or double quote
+	// prettier-ignore
+	let wordsToFind = searchString.split(/\"|\s/);
+	//remove all posible empty objects in the array
+	wordsToFind = removeEmptyObject(wordsToFind);
 	let regexOperator = /^OR|AND|NOT$/i;
+	/** begin to build the filter, if there is only 1 arg, don't 
+	enter to do-while loop*/
 	if (wordsToFind.length != 1) {
+		//while wordsToFind aren't empty, the loop continues
 		while (wordsToFind.length != 0) {
+			//extract the top word
 			let extractedWord = wordsToFind.shift();
+			//checks if word is an operator
 			if (regexOperator.test(extractedWord)) {
+				//parse word to lowerCase and get the next word
 				extractedWord = extractedWord.toLowerCase();
 				let nextExtract = wordsToFind.shift();
+				//switch the operator
 				switch (extractedWord) {
 					case 'or':
+						//identifies if the next operator will be an AND
 						if (/^and$/i.test(wordsToFind[0])) {
 							nextExtract = `\"${nextExtract}\"`;
+							nextExtract = replaceChar(nextExtract, 1);
+							finalString = finalString + ` ${nextExtract}`;
+						} else {
+							//if is not a AND the next operator, just push the arg into finalString
+							nextExtract = replaceChar(nextExtract);
+							finalString = finalString + ` ${nextExtract}`;
 						}
-						finalString = finalString + ` ${nextExtract}`;
 						break;
 					case 'and':
-						finalString = finalString + ` \"${nextExtract}\"`;
+						//checks if the second arg is a NOT operator
+						if (/^not/i.test(nextExtract)) {
+							nextExtract = `${wordsToFind.shift()}`;
+							nextExtract = replaceChar(nextExtract, 1);
+							finalString = finalString + ` -\"${nextExtract}\"`;
+						} else {
+							nextExtract = replaceChar(nextExtract, 1);
+							finalString = finalString + ` \"${nextExtract}\"`;
+						}
 						break;
 					case 'not':
+						nextExtract = replaceChar(nextExtract);
 						finalString = finalString + ` -${nextExtract}`;
 						break;
 				}
 			} else {
+				//if is not an operator, continues here, replace the possible '_' on word
+				extractedWord = replaceChar(extractedWord, 1);
+				//if are words remaining, checks if the next word is an And operator
 				if (wordsToFind.length > 1) {
 					if (/^and$/i.test(wordsToFind[0])) {
 						extractedWord = ` \"${extractedWord}\"`;
 					}
 				}
+				// and push the arg to the finalString
 				finalString = finalString + `${extractedWord}`;
 			}
 		}
+		//constructs the filter with the finalString
 		simpleFilter.$text = { $search: `${finalString}` };
-	} else simpleFilter.$text = { $search: ` ${searchString} ` };
+	} else {
+		//constructs a simple filter with 1 argument
+		simpleFilter.$text = { $search: `${replaceChar(searchString, 1)}` };
+	}
 	return simpleFilter;
 };
 
@@ -128,7 +171,7 @@ function getArg(Arg, filterObj, operator) {
 	var args = Arg.split(/\[|\]/);
 	const regexNumb = /^[0-9]+/gm;
 	//removing empty object that can be after split
-	removeEmptyObject(args);
+	args = removeEmptyObject(args);
 	//get the key and value in separated variables
 	var key = args[1];
 	var value = args[0];
@@ -159,6 +202,7 @@ function removeEmptyObject(elementsArray) {
 			elementsArray.splice(index, 1);
 		} else noEmptyElements = true; //if there are no empty elements, change the variable to true to break the loop
 	} while (noEmptyElements === false);
+	return elementsArray;
 }
 
 /** get all arguments and operators in searchString and push them into arrays 
@@ -207,7 +251,7 @@ function binaryTreeExtractor(searchString, argArray, operatorArray) {
 		//separete the elements of the string
 		var args = searchString.split(/\s|\(|\)/);
 		//removing empty object that can be after split
-		removeEmptyObject(args);
+		args = removeEmptyObject(args);
 		//if args more than 1 element, push in their respective array
 		if (args.length > 1) {
 			argArray.unshift(args[2]);
@@ -216,6 +260,49 @@ function binaryTreeExtractor(searchString, argArray, operatorArray) {
 		//and push the first arg into argArray
 		argArray.unshift(args[0]);
 	}
+}
+
+/** Replace a char in specific position 
+ * @param {String} str string that will change
+ * @param {number} index position of the char
+ * @param {Char} chr char value that replace in position
+*/
+function setCharAt(str, index, chr) {
+	if (index > str.length - 1) return str;
+	return str.substr(0, index) + chr + str.substr(index + 1);
+}
+
+/** function that locates parentheses and changes values in arguments with multiple words
+* @param {String} searchString String to parse
+*/
+function replaceParentheses(searchString) {
+	let i = 0;
+	do {
+		if (String(searchString).charAt(i) == '"') {
+			do {
+				i++;
+				if (String(searchString).charAt(i) === ' ') {
+					searchString = setCharAt(searchString, i, '_');
+				}
+			} while (String(searchString).charAt(i) != '"');
+		}
+		i++;
+	} while (i < searchString.length);
+	return searchString;
+}
+
+/** function that locates parentheses and changes values in arguments with multiple words
+* @param {String} variousWord String to change to it original form
+* @param {number} skip if it exists, don't add the escaped quotes
+*/
+function replaceChar(variousWord, skip) {
+	for (let i = 0; i < variousWord.length; i++) {
+		if (String(variousWord).charAt(i) === '_') {
+			variousWord = setCharAt(variousWord, i, ' ');
+			if (skip === undefined) variousWord = `\"${variousWord}\"`;
+		}
+	}
+	return variousWord;
 }
 
 module.exports = {
