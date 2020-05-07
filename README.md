@@ -2,11 +2,11 @@
 
 With this module you can be able to make a MongoDB filter starting from a string that contains all arguments and operator.
 
-Currently, the mongodb-filter-object-parser support 2 types of filter parser, simpleSearch and advancedSearch;
+Currently, the mongodb-filter-object-parser support 2 types of filter parser, search and advancedSearch;
 
 The first one focused on queries that only want to get the documents containing the term/argument that was sent in any text field, and the advanced one offers high control on the query and needs syntax like value-field as argument.
 
-## Simple search
+## Search
 
 ### Supported use-cases
 
@@ -108,10 +108,10 @@ As a result we'll obtain an object:
 ### Usage
 
 ~~~javascript
-import { advancedSearchFilter, simpleSearchFilter } from "buildFilter";
+import { advancedSearchFilter, searchFilter } from "buildFilter";
 
 const simpleString = 'Not blue and tall';
-const simpleFilter = simpleSearchFilter(simpleString);
+const simpleFilter = searchFilter(simpleString);
 
 const advancedString = '(Blue[Color] or Red[Color]) and Medium[Size]';
 const advancedFilter = advancedSearchFilter(string);

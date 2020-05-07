@@ -57,7 +57,7 @@ const advancedSearchFilter = (searchString) => {
  * @param {String} searchstring string that contains all argument 
  * and operators to be parsed
  */
-const simpleSearchFilter = (searchString) => {
+const searchFilter = (searchString) => {
 	// boiler-plate of the filter
 	let simpleFilter = { $text: {} };
 	let finalString = '';
@@ -307,5 +307,5 @@ function replaceChar(variousWord, skip) {
 
 module.exports = {
 	advancedSearchFilter,
-	simpleSearchFilter
+	searchFilter
 };
