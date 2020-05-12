@@ -66,6 +66,8 @@ Example:
 
 > ((Green[Color] or Blue[Color]) or Red[Color]) and Medium[Size]
 
+###### Note: You can use multiple words as a single search term with double quotes: "deep blue"
+
 Based on Binary Expression Tree the string will be passed to an object
 
 ![Binary expression tree](images/binaryTreeExample.png)

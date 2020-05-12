@@ -6,6 +6,7 @@ const advancedSearchFilter = (searchString) => {
 	var operatorArray = [];
 	// get the parenthesis count that remains in string
 	var count = 1;
+	searchString = replaceDoubleQuotes(searchString);
 	// insert all args and operator that searchString contains based on the parenthesis count
 	while (count != 0) {
 		count = validateString(searchString);
@@ -63,7 +64,7 @@ const searchFilter = (searchString) => {
 	let finalString = '';
 	/** we need to identified possible args with two or more words
 	 enclosed in double quotes */
-	searchString = replaceParentheses(searchString);
+	searchString = replaceDoubleQuotes(searchString);
 	//split all args by blank space or double quote
 	// prettier-ignore
 	let wordsToFind = searchString.split(/\"|\s/);
@@ -136,7 +137,8 @@ const searchFilter = (searchString) => {
 
 function validateString(searchString) {
 	// regex that validate String
-	const regex = /^(\(*[A-Za-z0-9]+\[([A-Za-z]+\.*)+\]\)*(\s(AND|OR|\:)\s)*\)*)+/gm;
+	// const regex = /^(\(*[A-Za-z0-9]+\[([A-Za-z]+\.*)+\]\)*(\s(AND|OR|\:)\s)*\)*)+/gm;
+	const regex = /^(\(*\"*[A-Za-z0-9\_]+\"*\[([A-Za-z]+\.*)+\]\)*(\s(AND|OR|\:)\s)*\)*)+/gm;
 	// validating the string
 	if (regex.test(searchString)) {
 		// variables to count all Parenthesis and Square Brackets
@@ -168,16 +170,16 @@ function validateString(searchString) {
  */
 function getArg(Arg, filterObj, operator) {
 	//separate the argument into array of elements to have key and values as separated elements
-	var args = Arg.split(/\[|\]/);
+	var args = Arg.split(/\"|\[|\]/);
 	const regexNumb = /^[0-9]+/gm;
 	//removing empty object that can be after split
 	args = removeEmptyObject(args);
 	//get the key and value in separated variables
 	var key = args[1];
-	var value = args[0];
+	var value = replaceChar(args[0], 0);
 	//checks if the value is a number and parse it
 	if (regexNumb.test(value)) value = parseInt(value);
-	else value = new RegExp('^' + args[0] + '$', 'i');
+	else value = new RegExp('^' + value + '$', 'i');
 	//checks if the operator exists (in case of simple queries)
 	if (operator === undefined) {
 		filterObj[key] = value;
@@ -275,7 +277,7 @@ function setCharAt(str, index, chr) {
 /** function that locates parentheses and changes values in arguments with multiple words
 * @param {String} searchString String to parse
 */
-function replaceParentheses(searchString) {
+function replaceDoubleQuotes(searchString) {
 	let i = 0;
 	do {
 		if (String(searchString).charAt(i) == '"') {
