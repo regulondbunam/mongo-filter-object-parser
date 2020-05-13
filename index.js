@@ -179,7 +179,7 @@ function getArg(Arg, filterObj, operator) {
 	var value = replaceChar(args[0], 0);
 	//checks if the value is a number and parse it
 	if (regexNumb.test(value)) value = parseInt(value);
-	else value = new RegExp('^' + value + '$', 'i');
+	else value = new RegExp(value, 'i');
 	//checks if the operator exists (in case of simple queries)
 	if (operator === undefined) {
 		filterObj[key] = value;
