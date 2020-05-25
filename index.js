@@ -15,36 +15,47 @@ const advancedSearchFilter = (searchString) => {
 	// if there is only one argument and not operator, just create a simple query filter with one only argument
 	if (operatorArray.length === 0) {
 		getArg(argArray[0], filterObject);
+	} else if (/^NOT$/i.test(operatorArray[0]) && operatorArray.length === 1 && argArray.length === 1) {
+		getNotAtStart(argArray[0], filterObject, '$' + operatorArray[0]);
 	} else {
 		/** prepare the operator with a $ character needed by mongodb to 
 		 * identified the query as a logical comparision */
-		var ope = '$' + operatorArray.shift().toLowerCase();
-		//prepare the first level of the object with the first logical operator
-		filterObject[ope] = [];
-		/** this loop asigns the 2 elements that are compared with the 
-		 * operator defined above and makes first level*/
-		for (var i = 0; i < 2; i++) {
-			//pop the first element in the argArray
-			var arg = argArray.shift();
-			// call the getArg function to get the first level of the filter
+		let ope = '$' + operatorArray.shift().toLowerCase();
+		if (/NOT/i.test(ope) && operatorArray.length + 1 < argArray.length) {
+			let arg1 = argArray.shift();
+			let arg2 = argArray.shift();
+			getArg(arg2, filterObject, ope);
+			getArg(arg1, filterObject, '$and');
+		} else if (/NOT/i.test(ope)) {
+			let arg = argArray.shift();
 			getArg(arg, filterObject, ope);
+		} else {
+			filterObject[ope] = [];
+			/** this loop asigns the 2 elements that are compared with the 
+		 * operator defined above and makes first level*/
+			for (let i = 0; i < 2; i++) {
+				//pop the first element in the argArray
+				let arg = argArray.shift();
+				// call the getArg function to get the first level of the filter
+				getArg(arg, filterObject, ope);
+			}
 		}
 		//this loop checks if argArray has remaining elements to continue
 		while (argArray.length !== 0) {
-			var arg = argArray.shift();
+			let arg = argArray.shift();
 			/** prepare a template filter that will help push the filterObject 
 			 * to the same level as the next operator*/
 
-			var filterBoilerPlate = {};
+			let filterBoilerPlate = {};
 			/** checks if the operatorArray has more operators */
 			if (operatorArray.length !== 0) {
 				ope = '$' + operatorArray.shift().toLowerCase();
-				filterBoilerPlate[ope] = [];
+				if (!/not/i.test(ope)) filterBoilerPlate[ope] = [];
 				getArg(arg, filterBoilerPlate, ope);
 				/**push the filterObject with the deeper level (the one obtained first)
 				 * into the filter template */
-
-				filterBoilerPlate[ope].push(filterObject);
+				if (!/not/i.test(ope)) filterBoilerPlate[ope].push(filterObject);
+				else filterBoilerPlate['$and'].push(filterObject);
 				//after that the template pass to be the filterObject
 				filterObject = filterBoilerPlate;
 			}
@@ -137,8 +148,9 @@ const searchFilter = (searchString) => {
 
 function validateString(searchString) {
 	// regex that validate String
-	// const regex = /^(\(*[A-Za-z0-9]+\[([A-Za-z]+\.*)+\]\)*(\s(AND|OR|\:)\s)*\)*)+/gm;
-	const regex = /^(\(*\"*[A-Za-z0-9\_]+\"*\[([A-Za-z]+\.*)+\]\)*(\s(AND|OR|\:)\s)*\)*)+/gm;
+	//previous regex
+	//const regex = /^(\(*\"*[A-Za-z0-9\_]+\"*\[([A-Za-z]+\.*)+\]\)*(\s(AND|OR|\:)\s)*\)*)+/gm;
+	const regex = /^(\(*\"*(NOT\s)*[A-Za-z0-9\_]+\"*\[([A-Za-z]+\.*)+\]\)*(\s(AND|OR|NOT)\s)*\)*)+/i;
 	// validating the string
 	if (regex.test(searchString)) {
 		// variables to count all Parenthesis and Square Brackets
@@ -171,6 +183,7 @@ function validateString(searchString) {
 function getArg(Arg, filterObj, operator) {
 	//separate the argument into array of elements to have key and values as separated elements
 	var args = Arg.split(/\"|\[|\]/);
+	let filterNot = {};
 	const regexNumb = /^[0-9]+/gm;
 	//removing empty object that can be after split
 	args = removeEmptyObject(args);
@@ -183,11 +196,36 @@ function getArg(Arg, filterObj, operator) {
 	//checks if the operator exists (in case of simple queries)
 	if (operator === undefined) {
 		filterObj[key] = value;
+	} else if (/NOT/i.test(operator)) {
+		filterObj['$and'] = [];
+		filterNot[key] = {
+			$not: value
+		};
+		filterObj['$and'].push(filterNot);
 	} else {
 		filterObj[operator].push({
 			[key]: value
 		});
 	}
+	return filterObj;
+}
+
+function getNotAtStart(Arg, filterObj, operator) {
+	//separate the argument into array of elements to have key and values as separated elements
+	var args = Arg.split(/\"|\[|\]/);
+	const regexNumb = /^[0-9]+/gm;
+	//removing empty object that can be after split
+	args = removeEmptyObject(args);
+	//get the key and value in separated variables
+	var key = args[1];
+	var value = replaceChar(args[0], 0);
+	//checks if the value is a number and parse it
+	if (regexNumb.test(value)) value = parseInt(value);
+	else value = new RegExp(value, 'i');
+	//checks if the operator exists (in case of simple queries)
+	filterObj[key] = {
+		$not: value
+	};
 	return filterObj;
 }
 
@@ -255,12 +293,18 @@ function binaryTreeExtractor(searchString, argArray, operatorArray) {
 		//removing empty object that can be after split
 		args = removeEmptyObject(args);
 		//if args more than 1 element, push in their respective array
-		if (args.length > 1) {
-			argArray.unshift(args[2]);
-			operatorArray.unshift(args[1]);
+		let regexNot = /^NOT$/i;
+		if (regexNot.test(args[0])) {
+			operatorArray.unshift(args[0]);
+			argArray.unshift(args[1]);
+		} else {
+			if (args.length > 1) {
+				argArray.unshift(args[2]);
+				operatorArray.unshift(args[1]);
+			}
+			//and push the first arg into argArray
+			argArray.unshift(args[0]);
 		}
-		//and push the first arg into argArray
-		argArray.unshift(args[0]);
 	}
 }
 

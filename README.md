@@ -47,7 +47,7 @@ As result will obtain
 
 - Get documents containing the value defined in the field defined.
 - Has more control at deep-level, as Binary tree expression (at this moment, tree can grow to the left).
-- Can be used logical operators like AND & OR.
+- Can be used logical operators like NOT, AND & OR.
 - Value is case insensitive.
 
 ### Out of scope
@@ -58,7 +58,7 @@ As result will obtain
 
 The syntax of the string will be like:
 
->(Value[Field]) or|and Value[Field]
+>(not) (Value[Field]) or|and|not Value[Field]
 
 *Note:* _At this time, the tree can only grow to the left, all new arguments should be added at the end_
 

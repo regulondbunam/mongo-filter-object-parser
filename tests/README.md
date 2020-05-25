@@ -25,7 +25,7 @@ The first one focused on queries that only want to get the documents containing 
 
 - Get documents containing the value defined in the field defined.
 - Has more control at deep-level, as Binary tree expression (at this moment, tree can grow to the left).
-- Can be used logical operators like AND & OR.
+- Can be used logical operators like NOT, AND & OR.
 - Value is case insensitive.
 
 ### Out of scope
