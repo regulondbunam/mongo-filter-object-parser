@@ -150,7 +150,7 @@ function validateString(searchString) {
 	// regex that validate String
 	//previous regex
 	//const regex = /^(\(*\"*[A-Za-z0-9\_]+\"*\[([A-Za-z]+\.*)+\]\)*(\s(AND|OR|\:)\s)*\)*)+/gm;
-	const regex = /^(\(*\"*(NOT\s)*[A-Za-z0-9\_]+\"*\[([A-Za-z]+\.*)+\]\)*(\s(AND|OR|NOT)\s)*\)*)+/i;
+	const regex = /^(\(*\"*(NOT\s)*[A-Za-z0-9\_\|]+\"*\[([A-Za-z]+\.*)+\]\)*(\s(AND|OR|NOT|\:)\s)*\)*)+/i;
 	// validating the string
 	if (regex.test(searchString)) {
 		// variables to count all Parenthesis and Square Brackets
