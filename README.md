@@ -1,20 +1,23 @@
 # String to filter object converter for MongoDB
 
-With this module you can be able to make a MongoDB filter starting from a string that contains all arguments and operator.
+With this module you can make a MongoDB filter starting from a string that contains all arguments and operator.
 
-Currently, the mongodb-filter-object-parser support 2 types of filter parser, search and advancedSearch;
+Currently, the mongodb-filter-object-parser support 3 types of filter parser: search, textSearch and advancedSearch;
 
-The first one focused on queries that only want to get the documents containing the term/argument that was sent in any text field, and the advanced one offers high control on the query and needs syntax like value-field as argument.
+The first one focuses on queries that only want to get the documents containing the term/argument that was sent in any text field contained in a text index; textSearch accepts no-complete words as an argument and query fields defined in an array; and the advanced one offers high control on the query and needs syntax like value-field as argument.
 
 ## Search
 
 ### Supported use-cases
 
-- Get all documents containing one word or more in all text fields of the document.
+- Get all documents containing one word or more in all text fields defined in a text index
 - Can be used logical operators like AND, OR & NOT.
 - Use two or more words as one argument.
 
 ### Out of scope
+
+- Get only fully matched documents in response
+- Use substring as an argument
 
 - Advanced logic control with the use of parentheses.
 - Make the query in a specific Field of the document.
@@ -40,6 +43,69 @@ As result will obtain
   }
 }
 ```
+
+
+
+## Text Search
+
+### Supported use-cases
+
+- Use regex to get only fully matched documents in response
+- Get all documents that contain one, part of, or more than one word in all text fields defined in the function.
+
+- Can be used logical operators like AND, OR & NOT.
+- Use two or more words as one argument.
+
+### Out of scope
+
+- Advanced logic control with the use of parentheses.
+- Make the query in a specific Field of the document.
+- Use a predefined text index of the collection.
+
+### Syntax 
+
+Only pass a String with all arguments and operators separated by a space like:
+
+> (NOT) Value AND|OR|NOT value
+
+###### Note: You can use multiple words as a single search term with double quotes: "search words"
+
+Example:
+
+> blue and tall
+
+As result will obtain
+
+```json
+{ 
+    "$and": [
+        { 
+            "$or": [
+                { "object.color": /tall\b/i }, 
+                { "object.height": /tall\b/i } 
+            ] 
+        }, 
+        { 
+            "$or": [
+                { "object.color": /blue\b/i }, 
+                { "object.height": /blue\b/i } 
+            ]  
+        } 
+    ] 
+}
+```
+
+### Configuration options
+
+##### properties
+
+The textSearch function requires this argument to know the fields to query, it must be an array of strings with all the fields
+
+##### fullMatchOnly
+
+Tells the function if the search will return only full matched documents in the query.
+
+
 
 ## Advanced search
 
