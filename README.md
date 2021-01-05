@@ -176,16 +176,18 @@ As a result we'll obtain an object:
 ### Usage
 
 ~~~javascript
-import { advancedSearchFilter, searchFilter } from "buildFilter";
+import { searchFilter, textSearchFilter, advancedSearchFilter } from "buildFilter";
 
 const simpleString = 'Not blue and tall';
 const simpleFilter = searchFilter(simpleString);
+const textFilter = textSearchFilter(simpleString,["color", "height"])
 
 const advancedString = '(Blue[Color] or Red[Color]) and Medium[Size]';
 const advancedFilter = advancedSearchFilter(string);
 
 //use trough mongodb in a ODM as mongoose
 const query = Collection.find(simpleFilter);
+const query = Collection.find(textFilter);
 const query = Collection.find(advancedFilter);
 ~~~
 
