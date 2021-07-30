@@ -1,6 +1,6 @@
 {
 	"name": "mongodb-filter-object-parser",
-	"version": "1.2.3",
+	"version": "1.2.5",
 	"description": "module that converts a string to an object that can be used in mongodb as a filter",
 	"main": "index.js",
 	"scripts": {
