@@ -8,20 +8,20 @@ const testSpaces =
 const notSupportedString = '(Carlos[Author] AND Robert[Investigator]) OR (General[Book] AND Biomedics[Title])';
 
 test('simple query object filter', () => {
-	expect(advancedSearchFilter(simpleTest)).toStrictEqual({ 'geneInfo.strand': /forward/i });
+	expect(advancedSearchFilter(simpleTest)).toStrictEqual({ 'geneInfo.strand': /forward/ });
 });
 
 test('filter object with 2 arguments', () => {
 	expect(advancedSearchFilter(test2Args)).toStrictEqual({
-		$and: [ { 'geneInfo.strand': /forward/i }, { 'geneInfo.strand': /reverse/i } ]
+		$and: [ { 'geneInfo.strand': /forward/ }, { 'geneInfo.strand': /reverse/ } ]
 	});
 });
 
 test('get correct object filter with depth of 4 arguments', () => {
 	expect(advancedSearchFilter(test4Args)).toStrictEqual({
 		$and: [
-			{ Title: /Biomedics/i },
-			{ $or: [ { Book: /General/i }, { $and: [ { Author: /Carlos/i }, { Investigator: /Robert/i } ] } ] }
+			{ Title: /Biomedics/ },
+			{ $or: [ { Book: /General/ }, { $and: [ { Author: /Carlos/ }, { Investigator: /Robert/ } ] } ] }
 		]
 	});
 });
@@ -29,11 +29,11 @@ test('get correct object filter with depth of 4 arguments', () => {
 test('value with spaces char', () => {
 	expect(advancedSearchFilter(testSpaces)).toStrictEqual({
 		$and: [
-			{ Title: /Natural Biomedics/i },
+			{ Title: /Natural Biomedics/ },
 			{
 				$or: [
-					{ Book: /General recommendations/i },
-					{ $and: [ { Author: /Carlos/i }, { Investigator: /Robert/i } ] }
+					{ Book: /General recommendations/ },
+					{ $and: [ { Author: /Carlos/ }, { Investigator: /Robert/ } ] }
 				]
 			}
 		]
