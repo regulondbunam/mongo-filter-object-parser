@@ -4,7 +4,7 @@ const simpleTest = 'forward[geneInfo.strand]';
 const test2Args = '(forward[geneInfo.strand]) AND reverse[geneInfo.strand]';
 const test4Args = '((Carlos[Author] AND Robert[Investigator]) OR General[Book]) AND Biomedics[Title]';
 const testSpaces =
-	'((Carlos[Author] AND Robert[Investigator]) OR General recommendations[Book]) AND Natural Biomedics[Title]';
+	'((Carlos[Author] AND Robert[Investigator]) OR \"General recommendations\'[Book]) AND \'Natural Biomedics\'[Title]';
 const notSupportedString = '(Carlos[Author] AND Robert[Investigator]) OR (General[Book] AND Biomedics[Title])';
 
 test('simple query object filter', () => {

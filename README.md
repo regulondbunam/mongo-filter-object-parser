@@ -28,7 +28,7 @@ Only pass a String with all arguments and operators separated by a space like:
 
 > (NOT) Value AND|OR|NOT value
 
-###### Note: You can use multiple words as a single search term with double quotes: "search words"
+###### Note: You can use multiple words as a single search term with double quotes ("words to search") or single quotes ('words to search')
 
 Example:
 
@@ -68,7 +68,7 @@ Only pass a String with all arguments and operators separated by a space like:
 
 > (NOT) Value AND|OR|NOT value
 
-###### Note: You can use multiple words as a single search term with double quotes: "search words"
+###### Note: You can use multiple words as a single search term with double quotes ("words to search") or single quotes ('words to search')
 
 Example:
 
@@ -132,7 +132,7 @@ Example:
 
 > ((Green[Color] or Blue[Color]) or Red[Color]) and Medium[Size]
 
-###### Note: You can use multiple words as a single search term with double quotes: "deep blue"
+###### Note: You can use multiple words as a single search term with double quotes ("deep blue") or single quotes ('deep blue')
 
 Based on Binary Expression Tree the string will be passed to an object
 
@@ -176,14 +176,14 @@ As a result we'll obtain an object:
 ### Usage
 
 ~~~javascript
-import { searchFilter, textSearchFilter, advancedSearchFilter } from "buildFilter";
+import { searchFilter, textSearchFilter, advancedSearchFilter } from "mongodb-object-filter-parser";
 
 const simpleString = 'Not blue and tall';
 const simpleFilter = searchFilter(simpleString);
 const textFilter = textSearchFilter(simpleString,["color", "height"])
 
 const advancedString = '(Blue[Color] or Red[Color]) and Medium[Size]';
-const advancedFilter = advancedSearchFilter(string);
+const advancedFilter = advancedSearchFilter(advancedString);
 
 //use trough mongodb in a ODM as mongoose
 const query = Collection.find(simpleFilter);
@@ -193,7 +193,7 @@ const query = Collection.find(advancedFilter);
 
 ### License
 
-Copyright 2020
+Copyright 2021
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
