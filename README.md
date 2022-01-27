@@ -167,13 +167,43 @@ As a result we'll obtain an object:
 }
 ```
 
-### Installation
+### *_NEW!_*: Ranged queries 
+In version 1.4.0 a way to transform a string with a range query for numerical properties was added, this can be used with double colon between the 2 values to be queried. For example:
+
+> milk[productName] AND 1000::10000[quantity]
+
+with the query string defined up, the filter obtained is:
+
+```json
+{
+  "$and":[
+    {
+      "productName": /milk/
+    },
+    {
+      "quantity":{
+        "$gte":1000
+      }
+    },
+    {
+      "quantity":{
+        "$lte":10000
+      }
+    }
+  ]
+}
+```
+*Note:* _Ranged query are only available for numbers, dates will be added in further updates_
+
+---
+
+## Installation
 
 > npm install mongodb-filter-object-parser
 
 
 
-### Usage
+## Usage
 
 ~~~javascript
 import { searchFilter, textSearchFilter, advancedSearchFilter } from "mongodb-object-filter-parser";
@@ -191,7 +221,7 @@ const query = Collection.find(textFilter);
 const query = Collection.find(advancedFilter);
 ~~~
 
-### License
+## License
 
 Copyright 2021
 

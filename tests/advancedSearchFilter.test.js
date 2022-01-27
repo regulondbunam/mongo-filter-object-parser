@@ -6,6 +6,7 @@ const test4Args = '((Carlos[Author] AND Robert[Investigator]) OR General[Book]) 
 const testSpaces =
 	'((Carlos[Author] AND Robert[Investigator]) OR \"General recommendations\'[Book]) AND \'Natural Biomedics\'[Title]';
 const notSupportedString = '(Carlos[Author] AND Robert[Investigator]) OR (General[Book] AND Biomedics[Title])';
+const testWithRange = "(reverse[strand] AND 1000::10000[leftEndPosition]) NOT araC[labelName]" 
 
 test('simple query object filter', () => {
 	expect(advancedSearchFilter(simpleTest)).toStrictEqual({ 'geneInfo.strand': /forward/ });
@@ -44,4 +45,34 @@ test('string syntax not yet supported', () => {
 	expect(() => {
 		advancedSearchFilter(notSupportedString);
 	}).toThrowError(Error);
+});
+
+
+test('query with ranges', () => {
+	expect(advancedSearchFilter(testWithRange)).toStrictEqual({
+		"$and":[
+		   {
+			  "labelName":{
+				 "$not": /araC/
+			  }
+		   },
+		   {
+			  "$and":[
+				 {
+					"strand": /reverse/
+				 },
+				 {
+					"leftEndPosition":{
+					   "$gte":1000
+					}
+				 },
+				 {
+					"leftEndPosition":{
+					   "$lte":10000
+					}
+				 }
+			  ]
+		   }
+		]
+	 });
 });
