@@ -103,7 +103,7 @@ The textSearch function requires this argument to know the fields to query, it m
 
 ##### fullMatchOnly
 
-Tells the function if the search will return only full matched documents in the query.
+Tells the function if the search will return only full matched (no substrings) documents in the query, this is still case insensitive.
 
 
 
@@ -115,10 +115,11 @@ Tells the function if the search will return only full matched documents in the 
 - Has more control at deep-level, as Binary tree expression (at this moment, tree can grow to the left).
 - Can be used logical operators like NOT, AND & OR.
 - Value is case insensitive.
+- Queries with numerical range (float or integer)
 
 ### Out of scope
 
-- Queries with range are not available support currently.
+- Queries with date range are not available support currently.
 
 ### Syntax
 
